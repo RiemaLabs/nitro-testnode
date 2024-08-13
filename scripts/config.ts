@@ -432,3 +432,11 @@ export const writeL3ChainConfigCommand = {
         writeL3ChainConfig(argv)
     }
 }
+
+export const writeL2DASCommitteeConfigCommand = {
+    command: "write-l2-das-committee-config",
+    describe: "writes daserver committee member config file",
+    handler: (argv: any) => {
+        writeL2DASCommitteeConfig(argv)
+    }    
+}

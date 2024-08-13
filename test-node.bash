@@ -50,6 +50,7 @@ batchposters=1
 devprivkey=b6b15c8cb491557369f3c7d2c287b053eb229daa9c22138887752191c9520659
 l1chainid=1337
 simple=true
+l2anytrust=false
 
 # Use the dev versions of nitro/blockscout
 dev_nitro=false
@@ -209,6 +210,10 @@ while [[ $# -gt 0 ]]; do
             l3_token_bridge=true
             shift
             ;;
+        --l2-anytrust)
+			l2anytrust=true
+			shift
+			;;
         --redundantsequencers)
             simple=false
             redundantsequencers=$2
@@ -241,6 +246,7 @@ while [[ $# -gt 0 ]]; do
             echo --l3node          deploys an L3 node on top of the L2
             echo --l3-fee-token    L3 chain is set up to use custom fee token. Only valid if also '--l3node' is provided
             echo --l3-token-bridge Deploy L2-L3 token bridge. Only valid if also '--l3node' is provided
+			echo --l2-anytrust     run the L2 as an AnyTrust chain
             echo --batchposters    batch posters [0-3]
             echo --redundantsequencers redundant sequencers [0-3]
             echo --detach          detach from nodes after running them
@@ -303,6 +309,10 @@ if $blockscout; then
     NODES="$NODES blockscout"
 fi
 
+if $l2anytrust; then
+	#	NODES="$NODES das-committee-a das-committee-b das-mirror"
+    NODES="$NODES das-committee-a"
+fi
 
 if $dev_nitro && $build_dev_nitro; then
   echo == Building Nitro
@@ -373,6 +383,13 @@ if $force_init; then
     docker compose run --entrypoint sh geth -c "echo passphrase > /datadir/passphrase"
     docker compose run --entrypoint sh geth -c "chown -R 1000:1000 /keystore"
     docker compose run --entrypoint sh geth -c "chown -R 1000:1000 /config"
+
+    if $l2anytrust; then
+        echo == Generating AnyTrust BLS keys
+        docker compose run --user root --entrypoint sh datool -c "mkdir /das-committee-a/keys /das-committee-a/data /das-committee-a/metadata"
+        docker compose run --user root --entrypoint sh datool -c "chown -R 1000:1000 /das-committee-a"
+        docker compose run datool keygen --dir /das-committee-a/keys
+    fi
 
     if $consensusclient; then
       echo == Writing configs

@@ -361,6 +361,27 @@ services:
       - "config:/config"
       - /var/run/docker.sock:/var/run/docker.sock
 
+  datool:
+    image: nitro-node-dev-testnode
+    entrypoint: /usr/local/bin/datool
+    volumes:
+      - "config:/config"
+      - "das-committee-a-data:/das-committee-a"
+    command:
+
+  das-committee-a:
+    pid: host # allow debugging
+    image: nitro-node-dev-testnode
+    entrypoint: /usr/local/bin/daserver
+    ports:
+      - "127.0.0.1:9876:9876"
+      - "127.0.0.1:9877:9877"
+    volumes:
+      - "config:/config"
+      - "das-committee-a-data:/das"
+    command:
+      - --conf.file /config/das_committee_a_config.json 
+
 volumes:
   l1data:
   consensus:
@@ -377,3 +398,6 @@ volumes:
   config:
   postgres-data:
   tokenbridge-data:
+  das-committee-a-data:
+  das-committee-b-data:
+  das-mirror-data:
