@@ -386,6 +386,33 @@ function writeL3ChainConfig(argv: any) {
     fs.writeFileSync(path.join(consts.configpath, "l3_chain_config.json"), l3ChainConfigJSON)
 }
 
+function writeL2DASCommitteeConfig(argv: any) {
+    const l2DASCommitteeConfig = {
+        "data-availability": {
+            "key": {
+                "key-dir": path.join("/das-committee-" + argv.committeeMember, "keys")
+            },
+            "local-file-storage": {
+                "data-dir": path.join("/das-committee-" + argv.committeeMember, "data"),
+                "enable": true,
+                "enable-expiry": true
+            },
+            "parent-chain-connection-attempts": 15
+        },
+        "enable-rest": true,
+        "enable-rpc": true,
+        "log-level": "INFO",
+        "rest-addr": "0.0.0.0",
+        "rest-port": "9877",
+        "rpc-addr": "0.0.0.0",
+        "rpc-port": "9876"
+    }
+    const l2DASCommitteeConfigJSON = JSON.stringify(l2DASCommitteeConfig)
+
+    fs.writeFileSync(path.join(consts.configpath, "l2_das_committee_" + argv.committeeMember + ".json"), l2DASCommitteeConfigJSON)
+
+}
+
 export const writeConfigCommand = {
     command: "write-config",
     describe: "writes config files",
@@ -438,5 +465,5 @@ export const writeL2DASCommitteeConfigCommand = {
     describe: "writes daserver committee member config file",
     handler: (argv: any) => {
         writeL2DASCommitteeConfig(argv)
-    }    
+    }
 }

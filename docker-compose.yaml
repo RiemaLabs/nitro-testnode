@@ -380,7 +380,7 @@ services:
       - "config:/config"
       - "das-committee-a-data:/das"
     command:
-      - --conf.file /config/das_committee_a_config.json 
+      - --conf.file /config/das_committee_a_config.json
 
 volumes:
   l1data:
