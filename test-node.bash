@@ -389,6 +389,7 @@ if $force_init; then
         docker compose run --user root --entrypoint sh datool -c "mkdir /das-committee-a/keys /das-committee-a/data /das-committee-a/metadata"
         docker compose run --user root --entrypoint sh datool -c "chown -R 1000:1000 /das-committee-a"
         docker compose run datool keygen --dir /das-committee-a/keys
+        docker compose run scripts --committeeMember a write-l2-das-committee-config
     fi
 
     if $consensusclient; then
